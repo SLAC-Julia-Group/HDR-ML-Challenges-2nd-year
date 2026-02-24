@@ -2,7 +2,7 @@
 
 ## Overview
 
-Cross-domain transfer learning: an ATLAS particle physics foundation model (3.3M parameters, pretrained on charged particle track reconstruction) is adapted to predict coastal flooding events from NDBC buoy sea level time series.
+Cross-domain transfer learning: NEXUS foundation model (pretrained on particle track reconstruction) is adapted to predict coastal flooding events from NDBC buoy sea level time series.
 
 ## Model Description
 
