@@ -129,47 +129,6 @@ STEP_NORM = {
 
 # ── Weight loading ────────────────────────────────────────────────
 
-def _assign_weights_from_h5(model, h5_path):
-    """Load HDF5 weights into a model — name-based, with positional fallback."""
-    import h5py
-
-    data = {}
-    def _visit(name, obj):
-        if isinstance(obj, h5py.Dataset):
-            key = name[:-2] if name.endswith(':0') else name
-            data[key] = obj[()]
-    with h5py.File(h5_path, 'r') as f:
-        f.visititems(_visit)
-
-    def _var_path(var):
-        vname = getattr(var, 'path', None) or var.name
-        return vname[:-2] if vname.endswith(':0') else vname
-
-    # Try 1: name-based suffix matching
-    loaded = 0
-    for var in model.weights:
-        vname = _var_path(var)
-        for key, arr in data.items():
-            if vname == key or vname.endswith('/' + key) or key.endswith('/' + vname):
-                var.assign(arr)
-                loaded += 1
-                break
-    if loaded > 0:
-        return loaded
-
-    # Try 2: positional assignment (sorted keys vs model weight order)
-    arrays = sorted(data.items(), key=lambda x: x[0])
-    model_vars = model.weights
-    if len(arrays) != len(model_vars):
-        raise ValueError(
-            f"Weight count mismatch: h5 has {len(arrays)}, model has {len(model_vars)}")
-    for (h5_key, arr), var in zip(arrays, model_vars):
-        if arr.shape != tuple(var.shape):
-            raise ValueError(
-                f"Shape mismatch for {_var_path(var)}: h5 {arr.shape} vs model {tuple(var.shape)}")
-        var.assign(arr)
-    return len(arrays)
-
 
 # ── Feature computation ───────────────────────────────────────────
 
@@ -385,13 +344,13 @@ class Model:
 
         self.feat_model = FeaturePredictionModel()
         self.feat_model((tf.zeros((1, 30, 6)), tf.ones((1, 30))), training=False)
-        n = _assign_weights_from_h5(self.feat_model, feat_weights)
-        print(f"✓ feat_pred ({n} variables) from {os.path.basename(feat_weights)}")
+        self.feat_model.load_weights(feat_weights)
+        print(f"✓ feat_pred from {os.path.basename(feat_weights)}")
 
         self.step_model = StepGenerationModel()
         self.step_model((tf.zeros((1, 30, 6)), tf.ones((1, 30))), training=False)
-        n = _assign_weights_from_h5(self.step_model, step_weights)
-        print(f"✓ step_gen ({n} variables) from {os.path.basename(step_weights)}")
+        self.step_model.load_weights(step_weights)
+        print(f"✓ step_gen from {os.path.basename(step_weights)}")
 
     def predict(self, X):
         """
