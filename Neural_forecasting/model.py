@@ -338,19 +338,26 @@ class Model:
         self.step_model = None
 
     def load(self):
+        import pickle
         monkey_key  = "affi" if self.monkey_name == "affi" else "bei"
-        feat_weights = os.path.join(_DIR, f"feat_pred_{monkey_key}.weights.h5")
-        step_weights = os.path.join(_DIR, f"step_gen_{monkey_key}.weights.h5")
+        feat_path = os.path.join(_DIR, f"feat_pred_{monkey_key}.weights.pkl")
+        step_path = os.path.join(_DIR, f"step_gen_{monkey_key}.weights.pkl")
 
         self.feat_model = FeaturePredictionModel()
         self.feat_model((tf.zeros((1, 30, 6)), tf.ones((1, 30))), training=False)
-        self.feat_model.load_weights(feat_weights)
-        print(f"✓ feat_pred from {os.path.basename(feat_weights)}")
+        with open(feat_path, 'rb') as f:
+            weights = pickle.load(f)
+        for var, w in zip(self.feat_model.weights, weights):
+            var.assign(w)
+        print(f"✓ feat_pred from {os.path.basename(feat_path)}")
 
         self.step_model = StepGenerationModel()
         self.step_model((tf.zeros((1, 30, 6)), tf.ones((1, 30))), training=False)
-        self.step_model.load_weights(step_weights)
-        print(f"✓ step_gen from {os.path.basename(step_weights)}")
+        with open(step_path, 'rb') as f:
+            weights = pickle.load(f)
+        for var, w in zip(self.step_model.weights, weights):
+            var.assign(w)
+        print(f"✓ step_gen from {os.path.basename(step_path)}")
 
     def predict(self, X):
         """

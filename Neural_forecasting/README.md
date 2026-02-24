@@ -27,8 +27,8 @@ Cross-domain transfer learning: NEXUS foundation model (pretrained on particle t
 **Subjects**: 2 monkeys with separate weights
 | Monkey | Channels | Weight files |
 |--------|----------|-------------|
-| affi | 239 | `feat_pred_affi.weights.h5`, `step_gen_affi.weights.h5` |
-| beignet | 89 | `feat_pred_bei.weights.h5`, `step_gen_bei.weights.h5` |
+| affi | 239 | `feat_pred_affi.weights.pkl`, `step_gen_affi.weights.pkl` |
+| beignet | 89 | `feat_pred_bei.weights.pkl`, `step_gen_bei.weights.pkl` |
 
 ## Feature Engineering
 
@@ -62,7 +62,7 @@ predictions = m.predict(X)     # X: (N, 20, C, 9), returns (N, 20, C)
 | File | Description |
 |------|-------------|
 | `model.py` | Self-contained pipeline: architecture, weight loading, feature extraction, inference |
-| `feat_pred_affi/bei.weights.h5` | Feature prediction weights (per monkey, includes fine-tuned encoder) |
-| `step_gen_affi/bei.weights.h5` | Step generation weights (per monkey, includes fine-tuned encoder) |
+| `feat_pred_affi/bei.weights.pkl` | Feature prediction weights (per monkey, includes fine-tuned encoder) |
+| `step_gen_affi/bei.weights.pkl` | Step generation weights (per monkey, includes fine-tuned encoder) |
 | `requirements.txt` | Python dependencies |
 | `README.md` | This file |
