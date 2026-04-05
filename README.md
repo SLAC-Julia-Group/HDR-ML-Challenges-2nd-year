@@ -15,3 +15,5 @@ task-specific feature engineering and fine-tuning.
 ## Challenge 2 — Neural Activity Prediction (NU/NeuroBench Challenge)
 
 ---
+
+[![DOI](https://zenodo.org/badge/1165386124.svg)](https://doi.org/10.5281/zenodo.19432861)
